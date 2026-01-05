@@ -28,7 +28,7 @@ def get_response(prompt, img=None):
         except:
             return None, "Error"
 
-# --- 🎨 3. UI CSS (DARK MODE: WHITE TEXT + BRAND HEADER) ---
+# --- 🎨 3. UI CSS (DARK MODE with LIGHT INPUT BARS) ---
 import base64
 
 def get_base64_of_bin_file(bin_file):
@@ -43,81 +43,106 @@ def get_base64_of_bin_file(bin_file):
 img_main = get_base64_of_bin_file("main_bg.jpg.jpeg")
 img_sidebar = get_base64_of_bin_file("sidebar_bg.jpg.jpeg")
 
-# Define Background Logic (Dark Gradient Fallback if image fails)
+# Define Background Logic
 if img_main:
     main_bg_css = f"""background-image: url("data:image/jpg;base64,{img_main}"); background-size: cover; background-attachment: fixed;"""
 else:
-    main_bg_css = "background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);" # Dark fallback
+    main_bg_css = "background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);"
 
 if img_sidebar:
     sidebar_bg_css = f"""background-image: url("data:image/jpg;base64,{img_sidebar}"); background-size: cover;"""
 else:
-    sidebar_bg_css = "background-color: #111;" # Dark Sidebar fallback
+    sidebar_bg_css = "background-color: #111;"
 
 st.markdown(f"""
     <style>
-    /* 1. Backgrounds */
+    /* 1. Dark Backgrounds (Keep these) */
     .stApp {{ {main_bg_css} }}
     [data-testid="stSidebar"] {{ {sidebar_bg_css} border-right: 2px solid #B91372; }}
 
-    /* 2. GLOBAL TEXT COLOR -> WHITE */
-    html, body, p, .stMarkdown, .stText, label, div, li, span {{
+    /* 2. Global White Text (For everything else) */
+    html, body, p, .stMarkdown, .stText, label, div, li, span, h2, h3, h4, h5, h6 {{
         color: #ffffff !important;
-        font-size: 18px !important; /* Keep it readable */
-        font-weight: 500 !important;
-    }}
-    
-    /* 3. HEADERS -> WHITE (Except the Brand Title) */
-    h2, h3, h4, h5, h6 {{
-        color: #ffffff !important;
-        font-weight: 800 !important;
     }}
 
-    /* 4. THE EXCEPTION: SWASTHYA SAHAYAK TITLE (Brand Color) */
-    /* Target the Main Title and Sidebar Title */
+    /* 3. The Neon Title */
     h1 {{
-        color: #B91372 !important; /* Neon Pink/Red */
+        color: #B91372 !important;
         font-size: 3rem !important;
         font-weight: 900 !important;
         text-transform: uppercase;
-        text-shadow: 0px 0px 10px rgba(0,0,0,0.5); /* Shadow to make it pop */
+        text-shadow: 0px 0px 10px rgba(0,0,0,0.5);
+    }}
+
+    /* --- 🚨 THE NEW PART: MAKE BARS LIGHT THEME 🚨 --- */
+    
+    /* A. The File Uploader "Bar" */
+    [data-testid="stFileUploader"] section {{
+        background-color: #ffffff !important; /* White Background */
+        border: 1px solid #d1d5db !important;
+        border-radius: 8px !important;
+        padding: 10px !important;
+    }}
+    /* Make text inside Uploader BLACK */
+    [data-testid="stFileUploader"] section > div, 
+    [data-testid="stFileUploader"] section span,
+    [data-testid="stFileUploader"] section small {{
+         color: #000000 !important; 
+    }}
+
+    /* B. The Select Boxes (Language, Operator Role) */
+    /* The main box you see before clicking */
+    .stSelectbox > div > div {{
+        background-color: #ffffff !important; /* White Background */
+        color: #000000 !important; /* Black Text */
+        border: 1px solid #d1d5db !important;
+        border-radius: 8px !important;
+    }}
+    /* The dropdown menu that appears after clicking */
+    ul[data-testid="stSelectboxVirtualDropdown"] {{
+        background-color: #ffffff !important;
+        border: 1px solid #d1d5db !important;
+    }}
+    /* The options inside the dropdown */
+    ul[data-testid="stSelectboxVirtualDropdown"] li {{
+        color: #000000 !important; /* Black Text */
+        background-color: #ffffff !important;
+    }}
+    /* Hover effect for options */
+    ul[data-testid="stSelectboxVirtualDropdown"] li:hover {{
+        background-color: #f3f4f6 !important; /* Light gray on hover */
     }}
     
-    /* 5. CARDS - Must be Dark Transparent so White text shows up */
+    /* C. The Text Area (Clinical Narrative) - Make this light too for consistency */
+    .stTextArea textarea {{
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        border: 1px solid #d1d5db !important;
+        border-radius: 8px !important;
+    }}
+
+    /* -------------------------------------------------- */
+
+    /* Dark Glass Cards (Keep these) */
     .report-card, .hospital-card {{
-        background: rgba(0, 0, 0, 0.6); /* Dark Glass */
+        background: rgba(0, 0, 0, 0.6);
         border: 1px solid rgba(255, 255, 255, 0.2);
-        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
         backdrop-filter: blur(4px);
         border-radius: 12px;
         padding: 25px;
         margin-bottom: 20px;
     }}
 
-    /* 6. BUTTONS (Keep High Visibility) */
+    /* Buttons */
     a[href="tel:108"] {{
-        background-color: #ffffff !important; /* White Button */
-        color: #ff0000 !important; /* Red Text */
-        font-size: 1.5rem !important;
-        font-weight: 900 !important;
-        text-align: center !important;
-        display: block;
-        padding: 15px;
-        border-radius: 10px;
-        text-decoration: none;
-        border: 2px solid #ff0000;
+        background-color: #ffffff !important; color: #ff0000 !important;
+        border: 2px solid #ff0000; font-weight: 900 !important; display: block; padding: 15px; border-radius: 10px; text-align: center; text-decoration: none;
     }}
     [data-testid="stDownloadButton"] button {{
-        background-color: #2563EB !important;
-        color: white !important;
-        border: 1px solid white !important;
+        background-color: #2563EB !important; color: white !important; border: none !important;
     }}
     
-    /* Visibility Fix */
-    header[data-testid="stHeader"] {{
-        background: transparent;
-        visibility: visible !important;
-    }}
+    header[data-testid="stHeader"] {{ background: transparent; visibility: visible !important; }}
     </style>
 """, unsafe_allow_html=True)
 # --- 🏥 4. SIDEBAR ---
@@ -263,6 +288,7 @@ st.markdown("""
     </div>
 
 """, unsafe_allow_html=True)
+
 
 
 

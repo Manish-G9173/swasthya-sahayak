@@ -31,7 +31,7 @@ def get_response(prompt, img=None):
 # --- 🎨 3. UI CSS (THE GRADIENT FIX) ---
 # This replaces the image loading with a high-tech medical gradient
 st.markdown("""
-    
+    <style>
     .stApp {
         background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
         background-attachment: fixed;
@@ -237,5 +237,6 @@ st.markdown("""
     </div>
 
 """, unsafe_allow_html=True)
+
 
 

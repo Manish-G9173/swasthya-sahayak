@@ -28,7 +28,7 @@ def get_response(prompt, img=None):
         except:
             return None, "Error"
 
-# --- 🎨 3. UI CSS (The Original Image Loader) ---
+# --- 🎨 3. UI CSS (IMAGES + BIG TEXT COMBO) ---
 import base64
 
 def get_base64_of_bin_file(bin_file):
@@ -37,68 +37,107 @@ def get_base64_of_bin_file(bin_file):
             data = f.read()
         return base64.b64encode(data).decode()
     except FileNotFoundError:
-        return "" # Safe fail if image is missing
+        return "" # Returns empty if image is missing
 
-# Load Images (Make sure these names match EXACTLY what you uploaded)
-main_bg_ext = "jpg"
-sidebar_bg_ext = "jpg"
+# Load Images
+img_main = get_base64_of_bin_file("main_bg.jpg")
+img_sidebar = get_base64_of_bin_file("sidebar_bg.jpg")
 
-base64_main = get_base64_of_bin_file("main_bg.jpg.jpeg")
-base64_sidebar = get_base64_of_bin_file("sidebar_bg.jpg.jpeg")
+# Define Background Logic
+if img_main:
+    main_bg_css = f"""
+        background-image: url("data:image/jpg;base64,{img_main}");
+        background-size: cover;
+        background-attachment: fixed;
+    """
+else:
+    # Fallback to Gradient if image missing
+    main_bg_css = "background: linear-gradient(to right, #eef2f3, #8e9eab);"
 
-page_bg_img = f"""
-<style>
-/* Main Background */
-.stApp {{
-    background-image: url("data:image/jpg;base64,{base64_main}");
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
-}}
+if img_sidebar:
+    sidebar_bg_css = f"""
+        background-image: url("data:image/jpg;base64,{img_sidebar}");
+        background-size: cover;
+    """
+else:
+    sidebar_bg_css = "background-color: #ffffff;"
 
-/* Sidebar Background */
-[data-testid="stSidebar"] {{
-    background-image: url("data:image/jpg;base64,{base64_sidebar}");
-    background-size: cover;
-    background-position: center;
-}}
+st.markdown(f"""
+    <style>
+    /* 1. Main Background */
+    .stApp {{
+        {main_bg_css}
+    }}
 
-/* Transparency fixes to make text readable over images */
-.report-card, .hospital-card {{
-    background: rgba(255, 255, 255, 0.90) !important; /* White with slight transparency */
-    border-radius: 10px;
-    padding: 20px;
-}}
-h1, h2, h3, p, label {{
-    color: #000000 !important; /* Force text black for visibility */
-    text-shadow: 2px 2px 4px rgba(255,255,255,0.8);
-}}
-.stMarkdown p {{
-    color: #000000 !important;
-}}
+    /* 2. Sidebar Background */
+    [data-testid="stSidebar"] {{
+        {sidebar_bg_css}
+        border-right: 2px solid #d1d5db;
+    }}
 
-/* NUCLEAR BUTTONS (Unchanged) */
-a[href="tel:108"] {{
-    background-color: #ffffff !important;
-    color: #000000 !important;
-    border: 2px solid #ff4b4b !important;
-    font-weight: 900 !important;
-    text-align: center !important;
-    display: block;
-    padding: 10px;
-    text-decoration: none;
-    border-radius: 8px;
-}}
-[data-testid="stDownloadButton"] button {{
-    background-color: #ffffff !important;
-    color: #000000 !important;
-    border: 2px solid #4b88ff !important;
-    font-weight: 900 !important;
-}}
-</style>
-"""
+    /* 3. BIGGER FONTS (Global) */
+    html, body, [class*="css"] {{
+        font-family: 'Helvetica Neue', sans-serif;
+    }}
+    
+    p, .stMarkdown, .stText, label {{
+        font-size: 18px !important; 
+        color: #000000 !important; /* Black text for contrast over images */
+        font-weight: 600 !important;
+    }}
 
-st.markdown(page_bg_img, unsafe_allow_html=True)
+    /* 4. SIDEBAR TITLE - SUPER SIZE */
+    [data-testid="stSidebar"] h1 {{
+        font-size: 3rem !important;
+        text-align: center;
+        color: #B91372 !important;
+        text-transform: uppercase;
+        font-weight: 900 !important;
+        text-shadow: 2px 2px 0px #ffffff; /* White shadow to pop against bg */
+        margin-bottom: 20px;
+    }}
+    
+    /* 5. Headers */
+    h1, h2, h3 {{
+        color: #000000 !important;
+        font-weight: 800 !important;
+        text-shadow: 1px 1px 0px rgba(255,255,255,0.7);
+    }}
+
+    /* 6. Glass Cards (To make text readable over images) */
+    .report-card, .hospital-card {{
+        background: rgba(255, 255, 255, 0.90); /* 90% Opaque White */
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+        border-radius: 12px;
+        padding: 25px;
+        margin-bottom: 20px;
+    }}
+
+    /* 7. Nuclear Buttons */
+    a[href="tel:108"] {{
+        background-color: #DC2626 !important;
+        color: white !important;
+        font-size: 1.5rem !important;
+        font-weight: 900 !important;
+        text-align: center !important;
+        display: block;
+        padding: 15px;
+        border-radius: 10px;
+        text-decoration: none;
+    }}
+    [data-testid="stDownloadButton"] button {{
+        background-color: #2563EB !important;
+        color: white !important;
+        font-size: 1.2rem !important;
+        font-weight: bold !important;
+    }}
+    
+    header[data-testid="stHeader"] {{
+        background: transparent;
+        visibility: visible !important;
+    }}
+    </style>
+""", unsafe_allow_html=True)
 # --- 🏥 4. SIDEBAR ---
 with st.sidebar:
     st.markdown('<div class="sidebar-brand">🩺 SWASTHYA<br>SAHAYAK</div>', unsafe_allow_html=True)
@@ -242,6 +281,7 @@ st.markdown("""
     </div>
 
 """, unsafe_allow_html=True)
+
 
 
 

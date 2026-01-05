@@ -8,6 +8,7 @@ from PIL import Image
 st.set_page_config(page_title="Swasthya Sahayak | AI Triage", layout="wide", page_icon="🩺")
 
 # --- 🔑 1. SMART ENGINE CONFIG ---
+# ⚠️ SECURITY WARNING: If deploying publicly, move this to st.secrets
 api_key = "AIzaSyC5n3cR8mQw0G2k7PBth5SczuknqJqklmk"
 genai.configure(api_key=api_key)
 
@@ -31,24 +32,27 @@ def get_response(prompt, img=None):
 # --- 🖼️ 2. ASSET LOADING ---
 def get_base64_img(file_path):
     if not os.path.exists(file_path):
+        # Try common variations if exact match fails
         if file_path.endswith(".jpg"): file_path = file_path + ".jpeg"
         elif file_path.endswith(".jpeg"): file_path = file_path.replace(".jpeg", ".jpg")
+    
     if os.path.exists(file_path):
         with open(file_path, "rb") as f:
             return base64.b64encode(f.read()).decode()
     return None
 
+# Make sure these file names match EXACTLY what is in your folder
 main_bg = get_base64_img("main_bg.jpg.jpeg")
 side_bg = get_base64_img("sidebar_bg.jpg.jpeg")
 
-# --- 🎨 3. UI CSS (THE EMERGENCY FIX) ---
-bg_style = f'background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url("data:image/jpeg;base64,{main_bg}");' if main_bg else 'background: #0e1117;'
-sidebar_style = f'background: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url("data:image/jpeg;base64,{side_bg}");' if side_bg else 'background: #161b22;'
+# --- 🎨 3. UI CSS (BRIGHTER BACKGROUNDS) ---
+# UPDATED: Changed rgba(0,0,0,0.7) to 0.5 for main, and 0.9 to 0.7 for sidebar.
+# This reduces the black overlay so the images are brighter.
+bg_style = f'background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url("data:image/jpeg;base64,{main_bg}");' if main_bg else 'background: #0e1117;'
+sidebar_style = f'background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url("data:image/jpeg;base64,{side_bg}");' if side_bg else 'background: #161b22;'
 
 st.markdown(f"""
     <style>
-    
-   
     .stApp {{
         {bg_style}
         background-size: cover;
@@ -265,4 +269,3 @@ st.markdown("""
         </p>
     </div>
 """, unsafe_allow_html=True)
-

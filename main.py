@@ -28,72 +28,77 @@ def get_response(prompt, img=None):
         except:
             return None, "Error"
 
-# --- 🎨 3. UI CSS (THE GRADIENT FIX) ---
-# This replaces the image loading with a high-tech medical gradient
-st.markdown("""
-    <style>
-    .stApp {
-        background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
-        background-attachment: fixed;
-    }
-    
-    [data-testid="stSidebar"] {
-        background: #111;
-        border-right: 3px solid #B91372;
-    }
+# --- 🎨 3. UI CSS (The Original Image Loader) ---
+import base64
 
-    /* --- NUCLEAR BUTTONS (Unchanged) --- */
-    a[href="tel:108"] {
-        background-color: #ffffff !important;
-        color: #000000 !important;
-        border: 2px solid #ff4b4b !important;
-        font-weight: 900 !important;
-        text-align: center !important;
-        display: block;
-        padding: 10px;
-        text-decoration: none;
-        border-radius: 8px;
-    }
-    [data-testid="stDownloadButton"] button {
-        background-color: #ffffff !important;
-        color: #000000 !important;
-        border: 2px solid #4b88ff !important;
-        font-weight: 900 !important;
-    }
-    
-    .report-card {
-        background: white;
-        padding: 25px;
-        border-radius: 10px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        color: #333;
-        margin-bottom: 20px;
-    }
-    
-    .hospital-card {
-        background: rgba(255, 255, 255, 0.95);
-        border: 1px solid #ddd;
-        padding: 15px;
-        border-radius: 8px;
-        margin-top: 10px;
-        color: #333;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        margin-bottom: 10px;
-    }
+def get_base64_of_bin_file(bin_file):
+    try:
+        with open(bin_file, 'rb') as f:
+            data = f.read()
+        return base64.b64encode(data).decode()
+    except FileNotFoundError:
+        return "" # Safe fail if image is missing
 
-    .sidebar-brand {
-        color: #B91372;
-        font-size: 1.8rem;
-        font-weight: 900;
-        text-align: center;
-        margin-bottom: 20px;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-    }
-    h1, h2, h3 { color: white !important; }
-    p, label, .stMarkdown { color: #e0e0e0 !important; }
-    </style>
-""", unsafe_allow_html=True)
+# Load Images (Make sure these names match EXACTLY what you uploaded)
+main_bg_ext = "jpg"
+sidebar_bg_ext = "jpg"
+
+base64_main = get_base64_of_bin_file("main_bg.jpg")
+base64_sidebar = get_base64_of_bin_file("sidebar_bg.jpg")
+
+page_bg_img = f"""
+<style>
+/* Main Background */
+.stApp {{
+    background-image: url("data:image/jpg;base64,{base64_main}");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}}
+
+/* Sidebar Background */
+[data-testid="stSidebar"] {{
+    background-image: url("data:image/jpg;base64,{base64_sidebar}");
+    background-size: cover;
+    background-position: center;
+}}
+
+/* Transparency fixes to make text readable over images */
+.report-card, .hospital-card {{
+    background: rgba(255, 255, 255, 0.90) !important; /* White with slight transparency */
+    border-radius: 10px;
+    padding: 20px;
+}}
+h1, h2, h3, p, label {{
+    color: #000000 !important; /* Force text black for visibility */
+    text-shadow: 2px 2px 4px rgba(255,255,255,0.8);
+}}
+.stMarkdown p {{
+    color: #000000 !important;
+}}
+
+/* NUCLEAR BUTTONS (Unchanged) */
+a[href="tel:108"] {{
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 2px solid #ff4b4b !important;
+    font-weight: 900 !important;
+    text-align: center !important;
+    display: block;
+    padding: 10px;
+    text-decoration: none;
+    border-radius: 8px;
+}}
+[data-testid="stDownloadButton"] button {{
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    border: 2px solid #4b88ff !important;
+    font-weight: 900 !important;
+}}
+</style>
+"""
+
+st.markdown(page_bg_img, unsafe_allow_html=True)
 # --- 🏥 4. SIDEBAR ---
 with st.sidebar:
     st.markdown('<div class="sidebar-brand">🩺 SWASTHYA<br>SAHAYAK</div>', unsafe_allow_html=True)
@@ -237,6 +242,7 @@ st.markdown("""
     </div>
 
 """, unsafe_allow_html=True)
+
 
 
 

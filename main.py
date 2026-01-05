@@ -5,7 +5,7 @@ import os
 from PIL import Image
 
 # --- ⚙️ PAGE CONFIGURATION ---
-st.set_page_config(page_title="Swasthya Sahayak | AI Triage", layout="wide", page_icon="🩺")
+st.set_page_config(page_title="Swasthya Sahayak", layout="wide", initial_sidebar_state="expanded")
 
 # --- 🔑 1. SMART ENGINE CONFIG ---
 api_key = "AIzaSyC5n3cR8mQw0G2k7PBth5SczuknqJqklmk"
@@ -239,3 +239,4 @@ st.markdown("""
     </div>
 
 """, unsafe_allow_html=True)
+

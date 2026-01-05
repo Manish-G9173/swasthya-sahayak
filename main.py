@@ -40,8 +40,8 @@ def get_base64_of_bin_file(bin_file):
         return "" # Returns empty if image is missing
 
 # Load Images
-img_main = get_base64_of_bin_file("main_bg.jpg")
-img_sidebar = get_base64_of_bin_file("sidebar_bg.jpg")
+img_main = get_base64_of_bin_file("main_bg.jpg.jpeg")
+img_sidebar = get_base64_of_bin_file("sidebar_bg.jpg.jpeg")
 
 # Define Background Logic
 if img_main:
@@ -281,6 +281,7 @@ st.markdown("""
     </div>
 
 """, unsafe_allow_html=True)
+
 
 
 

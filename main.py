@@ -28,7 +28,7 @@ def get_response(prompt, img=None):
         except:
             return None, "Error"
 
-# --- 🎨 3. UI CSS (IMAGES + BIG TEXT COMBO) ---
+# --- 🎨 3. UI CSS (DARK MODE: WHITE TEXT + BRAND HEADER) ---
 import base64
 
 def get_base64_of_bin_file(bin_file):
@@ -37,86 +37,67 @@ def get_base64_of_bin_file(bin_file):
             data = f.read()
         return base64.b64encode(data).decode()
     except FileNotFoundError:
-        return "" # Returns empty if image is missing
+        return ""
 
 # Load Images
-img_main = get_base64_of_bin_file("main_bg.jpg.jpeg")
-img_sidebar = get_base64_of_bin_file("sidebar_bg.jpg.jpeg")
+img_main = get_base64_of_bin_file("main_bg.jpg")
+img_sidebar = get_base64_of_bin_file("sidebar_bg.jpg")
 
-# Define Background Logic
+# Define Background Logic (Dark Gradient Fallback if image fails)
 if img_main:
-    main_bg_css = f"""
-        background-image: url("data:image/jpg;base64,{img_main}");
-        background-size: cover;
-        background-attachment: fixed;
-    """
+    main_bg_css = f"""background-image: url("data:image/jpg;base64,{img_main}"); background-size: cover; background-attachment: fixed;"""
 else:
-    # Fallback to Gradient if image missing
-    main_bg_css = "background: linear-gradient(to right, #eef2f3, #8e9eab);"
+    main_bg_css = "background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);" # Dark fallback
 
 if img_sidebar:
-    sidebar_bg_css = f"""
-        background-image: url("data:image/jpg;base64,{img_sidebar}");
-        background-size: cover;
-    """
+    sidebar_bg_css = f"""background-image: url("data:image/jpg;base64,{img_sidebar}"); background-size: cover;"""
 else:
-    sidebar_bg_css = "background-color: #ffffff;"
+    sidebar_bg_css = "background-color: #111;" # Dark Sidebar fallback
 
 st.markdown(f"""
     <style>
-    /* 1. Main Background */
-    .stApp {{
-        {main_bg_css}
-    }}
+    /* 1. Backgrounds */
+    .stApp {{ {main_bg_css} }}
+    [data-testid="stSidebar"] {{ {sidebar_bg_css} border-right: 2px solid #B91372; }}
 
-    /* 2. Sidebar Background */
-    [data-testid="stSidebar"] {{
-        {sidebar_bg_css}
-        border-right: 2px solid #d1d5db;
-    }}
-
-    /* 3. BIGGER FONTS (Global) */
-    html, body, [class*="css"] {{
-        font-family: 'Helvetica Neue', sans-serif;
+    /* 2. GLOBAL TEXT COLOR -> WHITE */
+    html, body, p, .stMarkdown, .stText, label, div, li, span {{
+        color: #ffffff !important;
+        font-size: 18px !important; /* Keep it readable */
+        font-weight: 500 !important;
     }}
     
-    p, .stMarkdown, .stText, label {{
-        font-size: 18px !important; 
-        color: #000000 !important; /* Black text for contrast over images */
-        font-weight: 600 !important;
-    }}
-
-    /* 4. SIDEBAR TITLE - SUPER SIZE */
-    [data-testid="stSidebar"] h1 {{
-        font-size: 3rem !important;
-        text-align: center;
-        color: #B91372 !important;
-        text-transform: uppercase;
-        font-weight: 900 !important;
-        text-shadow: 2px 2px 0px #ffffff; /* White shadow to pop against bg */
-        margin-bottom: 20px;
-    }}
-    
-    /* 5. Headers */
-    h1, h2, h3 {{
-        color: #000000 !important;
+    /* 3. HEADERS -> WHITE (Except the Brand Title) */
+    h2, h3, h4, h5, h6 {{
+        color: #ffffff !important;
         font-weight: 800 !important;
-        text-shadow: 1px 1px 0px rgba(255,255,255,0.7);
     }}
 
-    /* 6. Glass Cards (To make text readable over images) */
+    /* 4. THE EXCEPTION: SWASTHYA SAHAYAK TITLE (Brand Color) */
+    /* Target the Main Title and Sidebar Title */
+    h1 {{
+        color: #B91372 !important; /* Neon Pink/Red */
+        font-size: 3rem !important;
+        font-weight: 900 !important;
+        text-transform: uppercase;
+        text-shadow: 0px 0px 10px rgba(0,0,0,0.5); /* Shadow to make it pop */
+    }}
+    
+    /* 5. CARDS - Must be Dark Transparent so White text shows up */
     .report-card, .hospital-card {{
-        background: rgba(255, 255, 255, 0.90); /* 90% Opaque White */
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+        background: rgba(0, 0, 0, 0.6); /* Dark Glass */
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        backdrop-filter: blur(4px);
         border-radius: 12px;
         padding: 25px;
         margin-bottom: 20px;
     }}
 
-    /* 7. Nuclear Buttons */
+    /* 6. BUTTONS (Keep High Visibility) */
     a[href="tel:108"] {{
-        background-color: #DC2626 !important;
-        color: white !important;
+        background-color: #ffffff !important; /* White Button */
+        color: #ff0000 !important; /* Red Text */
         font-size: 1.5rem !important;
         font-weight: 900 !important;
         text-align: center !important;
@@ -124,14 +105,15 @@ st.markdown(f"""
         padding: 15px;
         border-radius: 10px;
         text-decoration: none;
+        border: 2px solid #ff0000;
     }}
     [data-testid="stDownloadButton"] button {{
         background-color: #2563EB !important;
         color: white !important;
-        font-size: 1.2rem !important;
-        font-weight: bold !important;
+        border: 1px solid white !important;
     }}
     
+    /* Visibility Fix */
     header[data-testid="stHeader"] {{
         background: transparent;
         visibility: visible !important;
@@ -281,6 +263,7 @@ st.markdown("""
     </div>
 
 """, unsafe_allow_html=True)
+
 
 
 

@@ -47,7 +47,7 @@ sidebar_style = f'background: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)),
 
 st.markdown(f"""
     <style>
-    header[data-testid="stHeader"] {{ visibility: hidden; }}
+    
    
     .stApp {{
         {bg_style}
@@ -265,3 +265,4 @@ st.markdown("""
         </p>
     </div>
 """, unsafe_allow_html=True)
+

@@ -28,78 +28,51 @@ def get_response(prompt, img=None):
         except:
             return None, "Error"
 
-# --- 🖼️ 2. ASSET LOADING ---
-def get_base64_img(file_path):
-    if not os.path.exists(file_path):
-        if file_path.endswith(".jpg"): file_path = file_path + ".jpeg"
-        elif file_path.endswith(".jpeg"): file_path = file_path.replace(".jpeg", ".jpg")
-    if os.path.exists(file_path):
-        with open(file_path, "rb") as f:
-            return base64.b64encode(f.read()).decode()
-    return None
-
-main_bg = get_base64_img("main_bg.jpg") 
-side_bg = get_base64_img("sidebar_bg.jpg")
-
-# --- 🎨 3. UI CSS (THE EMERGENCY FIX) ---
-bg_style = f'background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url("data:image/jpeg;base64,{main_bg}");' if main_bg else 'background: #0e1117;'
-sidebar_style = f'background: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url("data:image/jpeg;base64,{side_bg}");' if side_bg else 'background: #161b22;'
-
-st.markdown(f"""
+# --- 🎨 3. UI CSS (THE GRADIENT FIX) ---
+# This replaces the image loading with a high-tech medical gradient
+st.markdown("""
     <style>
-    header[data-testid="stHeader"] {{ visibility: hidden; }}
+    header[data-testid="stHeader"] { visibility: hidden; }
     
-    .stApp {{
-        {bg_style}
-        background-size: cover;
+    .stApp {
+        background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
         background-attachment: fixed;
-    }}
-    [data-testid="stSidebar"] {{
-        {sidebar_style}
-        background-size: cover !important;
-        border-right: 3px solid #B91372 !important;
-    }}
-
-    /* --- 🚨 NUCLEAR OPTION FOR BUTTON VISIBILITY --- */
+    }
     
-    /* 1. CALL BUTTON (Link Button) - FORCE BLACK TEXT */
-    a[href="tel:108"] {{
+    [data-testid="stSidebar"] {
+        background: #111;
+        border-right: 3px solid #B91372;
+    }
+
+    /* --- NUCLEAR BUTTONS (Unchanged) --- */
+    a[href="tel:108"] {
         background-color: #ffffff !important;
         color: #000000 !important;
         border: 2px solid #ff4b4b !important;
         font-weight: 900 !important;
         text-align: center !important;
-    }}
-    /* Force every single element inside the link to be black */
-    a[href="tel:108"] > * {{
-        color: #000000 !important;
-        -webkit-text-fill-color: #000000 !important;
-    }}
-
-    /* 2. DOWNLOAD BUTTON - FORCE BLACK TEXT */
-    [data-testid="stDownloadButton"] button {{
+        display: block;
+        padding: 10px;
+        text-decoration: none;
+        border-radius: 8px;
+    }
+    [data-testid="stDownloadButton"] button {
         background-color: #ffffff !important;
         color: #000000 !important;
         border: 2px solid #4b88ff !important;
         font-weight: 900 !important;
-    }}
-    /* Force every single element inside the button to be black */
-    [data-testid="stDownloadButton"] button * {{
-        color: #000000 !important;
-        -webkit-text-fill-color: #000000 !important;
-        fill: #000000 !important;
-    }}
+    }
     
-    .report-card {{
+    .report-card {
         background: white;
         padding: 25px;
         border-radius: 10px;
         box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         color: #333;
         margin-bottom: 20px;
-    }}
+    }
     
-    .hospital-card {{
+    .hospital-card {
         background: rgba(255, 255, 255, 0.95);
         border: 1px solid #ddd;
         padding: 15px;
@@ -108,21 +81,21 @@ st.markdown(f"""
         color: #333;
         box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         margin-bottom: 10px;
-    }}
+    }
 
-    .sidebar-brand {{
+    .sidebar-brand {
         color: #B91372;
         font-size: 1.8rem;
         font-weight: 900;
         text-align: center;
         margin-bottom: 20px;
         text-transform: uppercase;
-    }}
-    h1, h2, h3 {{ color: white !important; }}
-    p, label {{ color: #e0e0e0 !important; }}
+        letter-spacing: 2px;
+    }
+    h1, h2, h3 { color: white !important; }
+    p, label, .stMarkdown { color: #e0e0e0 !important; }
     </style>
 """, unsafe_allow_html=True)
-
 # --- 🏥 4. SIDEBAR ---
 with st.sidebar:
     st.markdown('<div class="sidebar-brand">🩺 SWASTHYA<br>SAHAYAK</div>', unsafe_allow_html=True)
@@ -264,4 +237,5 @@ st.markdown("""
             ⚠️ DEMO MODE: FOR RESEARCH/HACKATHON ONLY. NOT FOR MEDICAL USE.
         </p>
     </div>
+
 """, unsafe_allow_html=True)

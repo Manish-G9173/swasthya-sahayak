@@ -28,7 +28,7 @@ def get_response(prompt, img=None):
         except:
             return None, "Error"
 
-# --- 🎨 3. UI CSS (DARK APP + WHITE INPUT BARS WITH BLACK TEXT) ---
+# --- 🎨 3. UI CSS (FINAL: DARK APP + WHITE RESULTS & INPUTS) ---
 import base64
 
 def get_base64_of_bin_file(bin_file):
@@ -60,7 +60,7 @@ st.markdown(f"""
     .stApp {{ {main_bg_css} }}
     [data-testid="stSidebar"] {{ {sidebar_bg_css} border-right: 2px solid #B91372; }}
 
-    /* 2. Global White Text (The Default) */
+    /* 2. Global Text -> White (Default for dark background) */
     html, body, p, .stMarkdown, .stText, label, div, li, span, h2, h3, h4, h5, h6 {{
         color: #ffffff !important;
     }}
@@ -74,58 +74,51 @@ st.markdown(f"""
         text-shadow: 0px 0px 10px rgba(0,0,0,0.5);
     }}
 
-    /* --- 🚨 FIXING THE INPUT BARS (WHITE BOX + BLACK TEXT) 🚨 --- */
-
-    /* Target the SELECT BOXES (Operator Role, Language) */
-    .stSelectbox > div > div {{
+    /* --- 🚨 FIX 1: EMERGENCY BUTTON (BLACK TEXT) 🚨 --- */
+    a[href="tel:108"] {{
         background-color: #ffffff !important; /* White Box */
-        border: 1px solid #d1d5db !important;
-    }}
-    
-    /* FORCE TEXT INSIDE SELECT BOX TO BE BLACK */
-    .stSelectbox > div > div div {{
-        color: #000000 !important; /* "ASHA Worker" becomes Black */
-        font-weight: bold !important;
-    }}
-    .stSelectbox > div > div p {{
-        color: #000000 !important; 
-    }}
-
-    /* Target the POPUP MENU (The list when you click) */
-    ul[data-testid="stSelectboxVirtualDropdown"] {{
-        background-color: #ffffff !important;
-    }}
-    ul[data-testid="stSelectboxVirtualDropdown"] li {{
-        background-color: #ffffff !important;
-        color: #000000 !important; /* Options become Black */
-    }}
-    
-    /* Target the FILE UPLOADER */
-    [data-testid="stFileUploader"] section {{
-        background-color: #ffffff !important;
-    }}
-    [data-testid="stFileUploader"] section > div, 
-    [data-testid="stFileUploader"] section span,
-    [data-testid="stFileUploader"] section small {{
-         color: #000000 !important; /* "Drag and drop" text becomes Black */
+        color: #000000 !important; /* BLACK TEXT */
+        border: 3px solid #ff0000 !important; /* Red Border */
+        font-weight: 900 !important;
+        font-size: 1.5rem !important;
+        text-align: center !important;
+        display: block;
+        padding: 15px;
+        border-radius: 10px;
+        text-decoration: none;
+        box-shadow: 0 0 15px rgba(255, 0, 0, 0.6); /* Red Glow */
     }}
 
-    /* -------------------------------------------------- */
-
-    /* Cards (Dark Glass) */
+    /* --- 🚨 FIX 2: PROTOCOL RESULT CARD (WHITE BOX + BLACK TEXT) 🚨 --- */
     .report-card, .hospital-card {{
-        background: rgba(0, 0, 0, 0.6);
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        background-color: #ffffff !important; /* Solid White Background */
+        border: 2px solid #d1d5db !important;
         border-radius: 12px;
         padding: 25px;
         margin-bottom: 20px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }}
+    
+    /* FORCE TEXT INSIDE THE REPORT CARD TO BE BLACK */
+    .report-card p, .report-card h1, .report-card h2, .report-card h3, .report-card li, .report-card span, .report-card div {{
+        color: #000000 !important; /* JET BLACK TEXT */
+        text-shadow: none !important;
+    }}
+
+    /* --- INPUT BARS (WHITE BOX + BLACK TEXT) --- */
+    .stSelectbox > div > div, [data-testid="stFileUploader"] section {{
+        background-color: #ffffff !important;
+        border: 1px solid #d1d5db !important;
+    }}
+    .stSelectbox > div > div div, [data-testid="stFileUploader"] section span, [data-testid="stFileUploader"] section small {{
+        color: #000000 !important;
+    }}
+    ul[data-testid="stSelectboxVirtualDropdown"] li {{
+        color: #000000 !important;
+        background-color: #ffffff !important;
     }}
 
     /* Buttons */
-    a[href="tel:108"] {{
-        background-color: #ffffff !important; color: #ff0000 !important;
-        border: 2px solid #ff0000; font-weight: 900 !important; display: block; padding: 15px; border-radius: 10px; text-align: center; text-decoration: none;
-    }}
     [data-testid="stDownloadButton"] button {{
         background-color: #2563EB !important; color: white !important; border: 1px solid white !important;
     }}
@@ -276,6 +269,7 @@ st.markdown("""
     </div>
 
 """, unsafe_allow_html=True)
+
 
 
 

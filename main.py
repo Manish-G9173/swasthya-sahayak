@@ -6,14 +6,25 @@ import base64
 # --- 1. CONFIGURATION ---
 st.set_page_config(layout="wide", page_title="Swasthya Sahayak", page_icon="🏥")
 
-# Setup API Key
-if "GOOGLE_API_KEY" not in st.secrets:
-    st.error("⚠️ Google API Key not found in secrets!")
+# --- API KEY SETUP ---
+# Tries to get the key from Streamlit Secrets.
+# If you are running locally and get an error, you can replace the line below with:
+# api_key = "YOUR_ACTUAL_API_KEY_HERE"
+try:
+    if "GOOGLE_API_KEY" in st.secrets:
+        api_key = st.secrets["GOOGLE_API_KEY"]
+    else:
+        # Fallback for local testing if secrets are missing
+        # REPLACE THE TEXT INSIDE QUOTES BELOW WITH YOUR API KEY IF NEEDED
+        api_key = "PASTE_YOUR_GOOGLE_API_KEY_HERE" 
+    
+    genai.configure(api_key=api_key)
+except Exception as e:
+    st.error("⚠️ API Key Error: Please set your GOOGLE_API_KEY in Streamlit secrets or the code.")
     st.stop()
 
-genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
 
-# --- 2. CSS & UI STYLING (THE FINAL LOOK) ---
+# --- 2. CSS & UI STYLING (FINAL: MAROON ALERTS + VISIBLE INPUTS) ---
 def get_base64_of_bin_file(bin_file):
     try:
         with open(bin_file, 'rb') as f:
@@ -22,9 +33,9 @@ def get_base64_of_bin_file(bin_file):
     except FileNotFoundError:
         return ""
 
-# Load Images (Safe Fallback)
-img_main = get_base64_of_bin_file("main_bg.jpg.jpeg")
-img_sidebar = get_base64_of_bin_file("sidebar_bg.jpg.jpeg")
+# Load Images
+img_main = get_base64_of_bin_file("main_bg.jpg")
+img_sidebar = get_base64_of_bin_file("sidebar_bg.jpg")
 
 # Define Background Logic
 if img_main:
@@ -39,30 +50,30 @@ else:
 
 st.markdown(f"""
     <style>
-    /* 1. Base App Background */
+    /* 1. Base App Backgrounds */
     .stApp {{ {main_bg_css} }}
     [data-testid="stSidebar"] {{ {sidebar_bg_css} border-right: 2px solid #B91372; }}
 
-    /* 2. Global Text -> WHITE (Default for dark background) */
+    /* 2. Global Text -> WHITE (For Dark Theme) */
     html, body, p, .stMarkdown, .stText, label, div, li, span, h2, h3, h4, h5, h6 {{
         color: #ffffff !important;
     }}
 
     /* 3. Title Style */
     h1 {{
-        color: #B91372 !important; /* Neon Pink/Maroon Brand Color */
+        color: #B91372 !important; /* Brand Pink/Maroon */
         font-weight: 900 !important;
         text-shadow: 0px 0px 10px rgba(0,0,0,0.5);
         text-transform: uppercase;
     }}
 
-    /* --- 🚨 THE MAROON FIX (FOR RESULTS & 108) 🚨 --- */
+    /* --- 🚨 MAROON GLASS ALERTS (108 & Results) 🚨 --- */
 
-    /* A. CALL 108 BUTTON - Translucent Maroon Box */
+    /* A. Call 108 Button */
     a[href="tel:108"] {{
-        background-color: rgba(128, 0, 0, 0.85) !important; /* MAROON + TRANSPARENCY */
-        color: #ffffff !important;                          /* WHITE TEXT */
-        border: 2px solid #ff4b4b !important;               /* Bright Red Border */
+        background-color: rgba(128, 0, 0, 0.85) !important; /* Translucent Maroon */
+        color: #ffffff !important;                          /* White Text */
+        border: 2px solid #ff4b4b !important;               /* Red Border */
         font-weight: 900 !important;
         font-size: 1.5rem !important;
         text-align: center !important;
@@ -76,9 +87,9 @@ st.markdown(f"""
         margin-bottom: 20px;
     }}
 
-    /* B. REPORT CARDS & HOSPITAL LIST - Translucent Maroon Box */
+    /* B. Report Cards & Hospitals */
     .report-card, .hospital-card {{
-        background-color: rgba(128, 0, 0, 0.85) !important; /* MAROON + TRANSPARENCY */
+        background-color: rgba(128, 0, 0, 0.85) !important; /* Translucent Maroon */
         border: 1px solid rgba(255, 100, 100, 0.3) !important;
         border-radius: 12px;
         padding: 25px;
@@ -87,7 +98,7 @@ st.markdown(f"""
         box-shadow: 0 4px 15px rgba(0,0,0,0.5);
     }}
 
-    /* Force text INSIDE the Maroon box to be WHITE */
+    /* Text INSIDE Maroon Cards must be WHITE */
     .report-card p, .report-card h1, .report-card h2, .report-card h3, .report-card li, .report-card span,
     .hospital-card p, .hospital-card h1, .hospital-card h2, .hospital-card h3, .hospital-card li, .hospital-card span {{
         color: #ffffff !important;
@@ -95,22 +106,39 @@ st.markdown(f"""
         text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
     }}
 
-    /* --- INPUTS (WHITE BOX + BLACK TEXT) --- */
-    /* This makes "ASHA Worker", "Languages", and "Upload" visible */
+    /* --- 🚨 INPUT BARS (WHITE BOX + BLACK TEXT) 🚨 --- */
     
-    .stSelectbox > div > div, [data-testid="stFileUploader"] section, .stTextArea textarea {{
+    /* 1. Select Boxes (Role, Language) */
+    .stSelectbox > div > div {{
         background-color: #ffffff !important;
         border: 1px solid #d1d5db !important;
     }}
-    
-    /* The Text inside the inputs */
-    .stSelectbox > div > div div, [data-testid="stFileUploader"] section span, 
-    [data-testid="stFileUploader"] section small, .stTextArea textarea {{
-        color: #000000 !important; /* JET BLACK TEXT */
+    /* Force Text inside Selectbox to be BLACK */
+    .stSelectbox > div > div div {{
+        color: #000000 !important;
         font-weight: bold !important;
     }}
     
-    /* The Dropdown Menu Options */
+    /* 2. File Uploader */
+    [data-testid="stFileUploader"] section {{
+        background-color: #ffffff !important;
+        border: 1px solid #d1d5db !important;
+    }}
+    /* Force Text inside Uploader to be BLACK */
+    [data-testid="stFileUploader"] section span, 
+    [data-testid="stFileUploader"] section small {{
+        color: #000000 !important;
+        font-weight: bold !important;
+    }}
+
+    /* 3. Text Area */
+    .stTextArea textarea {{
+        background-color: #ffffff !important;
+        color: #000000 !important; /* Black Text */
+        border: 1px solid #d1d5db !important;
+    }}
+
+    /* 4. Dropdown Menu Items */
     ul[data-testid="stSelectboxVirtualDropdown"] li {{
         color: #000000 !important;
         background-color: #ffffff !important;
@@ -130,13 +158,16 @@ with st.sidebar:
     st.title("🚑 Swasthya Sahayak")
     st.markdown("### **Rural Triage System**")
     
+    # Inputs
     role = st.selectbox("Operator Role", ["ASHA Worker", "Community Volunteer", "Nurse"])
     language = st.selectbox("Output Language", ["English", "Hindi", "Telugu", "Tamil", "Kannada"])
     
     st.markdown("---")
     st.markdown("### **Emergency**")
+    # Call 108 Button
     st.markdown('<a href="tel:108">📞 CALL 108 (AMBULANCE)</a>', unsafe_allow_html=True)
     
+    # Hospital Finder
     if st.button("🏥 Find Nearest Hospitals"):
         hospital_list = """
         ### 🏥 Nearest Medical Centers Found:
@@ -146,6 +177,7 @@ with st.sidebar:
         
         *Ambulance ETA: ~15 Mins*
         """
+        # Display in Maroon Card
         st.markdown(f'<div class="hospital-card">{hospital_list}</div>', unsafe_allow_html=True)
 
 # --- 4. MAIN INTERFACE ---

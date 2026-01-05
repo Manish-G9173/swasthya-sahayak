@@ -43,8 +43,8 @@ def get_base64_of_bin_file(bin_file):
 main_bg_ext = "jpg"
 sidebar_bg_ext = "jpg"
 
-base64_main = get_base64_of_bin_file("main_bg.jpg")
-base64_sidebar = get_base64_of_bin_file("sidebar_bg.jpg")
+base64_main = get_base64_of_bin_file("main_bg.jpg.jpeg")
+base64_sidebar = get_base64_of_bin_file("sidebar_bg.jpg.jpeg")
 
 page_bg_img = f"""
 <style>
@@ -242,6 +242,7 @@ st.markdown("""
     </div>
 
 """, unsafe_allow_html=True)
+
 
 
 

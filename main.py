@@ -28,7 +28,7 @@ def get_response(prompt, img=None):
         except:
             return None, "Error"
 
-# --- 🎨 3. UI CSS (VISIBILITY EMERGENCY FIX) ---
+# --- 🎨 3. UI CSS (FINAL: TRANSLUCENT MAROON ALERTS) ---
 import base64
 
 def get_base64_of_bin_file(bin_file):
@@ -56,64 +56,77 @@ else:
 
 st.markdown(f"""
     <style>
-    /* 1. Base Dark Theme */
+    /* 1. Base App Background */
     .stApp {{ {main_bg_css} }}
     [data-testid="stSidebar"] {{ {sidebar_bg_css} border-right: 2px solid #B91372; }}
 
-    /* 2. Global Text is WHITE (for the dark background) */
-    p, .stMarkdown, .stText, label, h2, h3, h4, h5, h6, li, span {{
+    /* 2. Global Text -> WHITE */
+    html, body, p, .stMarkdown, .stText, label, div, li, span, h2, h3, h4, h5, h6 {{
         color: #ffffff !important;
     }}
-    
-    /* 3. The Title (Pink) */
+
+    /* 3. Title */
     h1 {{
         color: #B91372 !important;
+        font-weight: 900 !important;
+        text-shadow: 0px 0px 10px rgba(0,0,0,0.5);
         text-transform: uppercase;
-        text-shadow: 0px 0px 10px rgba(0,0,0,0.8);
     }}
 
-    /* --- 🚨 CRITICAL FIX: CALL 108 BUTTON 🚨 --- */
-    /* We force the text inside this specific button to be BLACK */
+    /* --- 🚨 THE MAROON FIX (PAKKA) 🚨 --- */
+
+    /* A. CALL 108 BUTTON - Translucent Maroon Box */
     a[href="tel:108"] {{
-        background-color: #ffffff !important; /* White Box */
-        color: #000000 !important;           /* BLACK TEXT (Forced) */
-        border: 3px solid #ff0000 !important;
+        background-color: rgba(128, 0, 0, 0.85) !important; /* MAROON + TRANSPARENCY */
+        color: #ffffff !important;                          /* WHITE TEXT */
+        border: 2px solid #ff4b4b !important;               /* Bright Red Border */
         font-weight: 900 !important;
-        font-size: 20px !important;
+        font-size: 1.5rem !important;
         text-align: center !important;
         display: block;
         padding: 15px;
-        border-radius: 10px;
+        border-radius: 12px;
         text-decoration: none;
-        margin-top: 20px;
+        backdrop-filter: blur(5px);                         /* Glass Effect */
+        box-shadow: 0 4px 15px rgba(0,0,0,0.5);
     }}
 
-    /* --- 🚨 CRITICAL FIX: HOSPITAL & REPORT CARDS 🚨 --- */
-    /* These are White Boxes, so text INSIDE them must be BLACK */
+    /* B. REPORT CARDS & HOSPITAL LIST - Translucent Maroon Box */
     .report-card, .hospital-card {{
-        background-color: #ffffff !important; /* Solid White */
-        border: 2px solid #333 !important;
-        border-radius: 10px;
-        padding: 20px;
+        background-color: rgba(128, 0, 0, 0.85) !important; /* MAROON + TRANSPARENCY */
+        border: 1px solid rgba(255, 100, 100, 0.3) !important;
+        border-radius: 12px;
+        padding: 25px;
         margin-bottom: 20px;
-    }}
-    
-    /* OVERRIDE: Force all text inside these cards to be BLACK */
-    .report-card p, .report-card h1, .report-card h2, .report-card h3, .report-card span, .report-card li, .report-card div,
-    .hospital-card p, .hospital-card h1, .hospital-card h2, .hospital-card h3, .hospital-card span, .hospital-card li, .hospital-card div {{
-        color: #000000 !important; /* Jet Black */
-        font-weight: bold !important;
+        backdrop-filter: blur(5px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.5);
     }}
 
-    /* --- INPUTS (White Box = Black Text) --- */
+    /* Force text INSIDE the Maroon box to be WHITE */
+    .report-card p, .report-card h1, .report-card h2, .report-card h3, .report-card li, .report-card span,
+    .hospital-card p, .hospital-card h1, .hospital-card h2, .hospital-card h3, .hospital-card li, .hospital-card span {{
+        color: #ffffff !important;
+        font-weight: 500 !important;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.8); /* Shadow makes white text pop on maroon */
+    }}
+
+    /* --- INPUTS (Keep White for readability) --- */
     .stSelectbox > div > div, [data-testid="stFileUploader"] section {{
         background-color: #ffffff !important;
     }}
     .stSelectbox > div > div div, [data-testid="stFileUploader"] section span {{
         color: #000000 !important;
     }}
+    ul[data-testid="stSelectboxVirtualDropdown"] li {{
+        color: #000000 !important;
+        background-color: #ffffff !important;
+    }}
+
+    /* Button Override */
+    [data-testid="stDownloadButton"] button {{
+        background-color: #2563EB !important; color: white !important; border: 1px solid white !important;
+    }}
     
-    /* Header Visibility */
     header[data-testid="stHeader"] {{ background: transparent; visibility: visible !important; }}
     </style>
 """, unsafe_allow_html=True)
@@ -240,15 +253,18 @@ if run_btn:
                         """, unsafe_allow_html=True)
 
                     # --- 2. THE AI REPORT CARD (BOTTOM) ---
-                    st.markdown(f"""
-                    <div class="report-card" style="border-left: 8px solid {border_color};">
-                        <div style="text-align:right; font-size:0.8rem; color:#888;">Model: {debug_info}</div>
-                        {clean_html}
-                    </div>
-                    """, unsafe_allow_html=True)
+                  if st.button("Generate Protocol"):
+    # ... (your AI generation code) ...
+    
+    # WRAP THE RESULT IN THE MAROON CARD
+    st.markdown(f'<div class="report-card">{response.text}</div>', unsafe_allow_html=True)
 
-                else:
-                    st.error(f"❌ API Error: {debug_info}")
+# ...
+
+# WRAP THE HOSPITAL LIST IN THE MAROON CARD
+if st.sidebar.button("Find Nearest Hospitals"):
+    # ...
+    st.markdown(f'<div class="hospital-card">{hospital_list}</div>', unsafe_allow_html=True)
 
 # --- ⚠️ SMALL FOOTER DISCLAIMER ---
 st.markdown("---")
@@ -260,6 +276,7 @@ st.markdown("""
     </div>
 
 """, unsafe_allow_html=True)
+
 
 
 

@@ -28,7 +28,7 @@ def get_response(prompt, img=None):
         except:
             return None, "Error"
 
-# --- 🎨 3. UI CSS (FINAL: DARK APP + WHITE RESULTS & INPUTS) ---
+# --- 🎨 3. UI CSS (VISIBILITY EMERGENCY FIX) ---
 import base64
 
 def get_base64_of_bin_file(bin_file):
@@ -43,7 +43,7 @@ def get_base64_of_bin_file(bin_file):
 img_main = get_base64_of_bin_file("main_bg.jpg.jpeg")
 img_sidebar = get_base64_of_bin_file("sidebar_bg.jpg.jpeg")
 
-# Define Background Logic
+# Background Logic
 if img_main:
     main_bg_css = f"""background-image: url("data:image/jpg;base64,{img_main}"); background-size: cover; background-attachment: fixed;"""
 else:
@@ -56,73 +56,64 @@ else:
 
 st.markdown(f"""
     <style>
-    /* 1. Dark Backgrounds */
+    /* 1. Base Dark Theme */
     .stApp {{ {main_bg_css} }}
     [data-testid="stSidebar"] {{ {sidebar_bg_css} border-right: 2px solid #B91372; }}
 
-    /* 2. Global Text -> White (Default for dark background) */
-    html, body, p, .stMarkdown, .stText, label, div, li, span, h2, h3, h4, h5, h6 {{
+    /* 2. Global Text is WHITE (for the dark background) */
+    p, .stMarkdown, .stText, label, h2, h3, h4, h5, h6, li, span {{
         color: #ffffff !important;
     }}
-
-    /* 3. The Neon Title */
+    
+    /* 3. The Title (Pink) */
     h1 {{
         color: #B91372 !important;
-        font-size: 3rem !important;
-        font-weight: 900 !important;
         text-transform: uppercase;
-        text-shadow: 0px 0px 10px rgba(0,0,0,0.5);
+        text-shadow: 0px 0px 10px rgba(0,0,0,0.8);
     }}
 
-    /* --- 🚨 FIX 1: EMERGENCY BUTTON (BLACK TEXT) 🚨 --- */
+    /* --- 🚨 CRITICAL FIX: CALL 108 BUTTON 🚨 --- */
+    /* We force the text inside this specific button to be BLACK */
     a[href="tel:108"] {{
         background-color: #ffffff !important; /* White Box */
-        color: #000000 !important; /* BLACK TEXT */
-        border: 3px solid #ff0000 !important; /* Red Border */
+        color: #000000 !important;           /* BLACK TEXT (Forced) */
+        border: 3px solid #ff0000 !important;
         font-weight: 900 !important;
-        font-size: 1.5rem !important;
+        font-size: 20px !important;
         text-align: center !important;
         display: block;
         padding: 15px;
         border-radius: 10px;
         text-decoration: none;
-        box-shadow: 0 0 15px rgba(255, 0, 0, 0.6); /* Red Glow */
+        margin-top: 20px;
     }}
 
-    /* --- 🚨 FIX 2: PROTOCOL RESULT CARD (WHITE BOX + BLACK TEXT) 🚨 --- */
+    /* --- 🚨 CRITICAL FIX: HOSPITAL & REPORT CARDS 🚨 --- */
+    /* These are White Boxes, so text INSIDE them must be BLACK */
     .report-card, .hospital-card {{
-        background-color: #ffffff !important; /* Solid White Background */
-        border: 2px solid #d1d5db !important;
-        border-radius: 12px;
-        padding: 25px;
+        background-color: #ffffff !important; /* Solid White */
+        border: 2px solid #333 !important;
+        border-radius: 10px;
+        padding: 20px;
         margin-bottom: 20px;
-        box-shadow: 0 10px 25px rgba(0,0,0,0.5);
     }}
     
-    /* FORCE TEXT INSIDE THE REPORT CARD TO BE BLACK */
-    .report-card p, .report-card h1, .report-card h2, .report-card h3, .report-card li, .report-card span, .report-card div {{
-        color: #000000 !important; /* JET BLACK TEXT */
-        text-shadow: none !important;
+    /* OVERRIDE: Force all text inside these cards to be BLACK */
+    .report-card p, .report-card h1, .report-card h2, .report-card h3, .report-card span, .report-card li, .report-card div,
+    .hospital-card p, .hospital-card h1, .hospital-card h2, .hospital-card h3, .hospital-card span, .hospital-card li, .hospital-card div {{
+        color: #000000 !important; /* Jet Black */
+        font-weight: bold !important;
     }}
 
-    /* --- INPUT BARS (WHITE BOX + BLACK TEXT) --- */
+    /* --- INPUTS (White Box = Black Text) --- */
     .stSelectbox > div > div, [data-testid="stFileUploader"] section {{
         background-color: #ffffff !important;
-        border: 1px solid #d1d5db !important;
     }}
-    .stSelectbox > div > div div, [data-testid="stFileUploader"] section span, [data-testid="stFileUploader"] section small {{
+    .stSelectbox > div > div div, [data-testid="stFileUploader"] section span {{
         color: #000000 !important;
-    }}
-    ul[data-testid="stSelectboxVirtualDropdown"] li {{
-        color: #000000 !important;
-        background-color: #ffffff !important;
-    }}
-
-    /* Buttons */
-    [data-testid="stDownloadButton"] button {{
-        background-color: #2563EB !important; color: white !important; border: 1px solid white !important;
     }}
     
+    /* Header Visibility */
     header[data-testid="stHeader"] {{ background: transparent; visibility: visible !important; }}
     </style>
 """, unsafe_allow_html=True)
@@ -269,6 +260,7 @@ st.markdown("""
     </div>
 
 """, unsafe_allow_html=True)
+
 
 
 

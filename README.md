@@ -15,3 +15,4 @@
 - **Frontend:** Streamlit (Python).
 - **Deployment:** Streamlit Cloud.
 
+<img width="1919" height="816" alt="image" src="https://github.com/user-attachments/assets/7ddef7e4-1446-4479-b7bc-defe383e9351" />

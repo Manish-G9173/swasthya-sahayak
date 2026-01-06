@@ -12,22 +12,37 @@ st.set_page_config(page_title="Swasthya Sahayak | AI Triage", layout="wide", pag
 api_key = "AIzaSyC5n3cR8mQw0G2k7PBth5SczuknqJqklmk"
 genai.configure(api_key=api_key)
 
+# --- REPLACEMENT FUNCTION: NEW PRO MODELS ---
 def get_response(prompt, img=None):
+    # TIER 1: Try the newest "2.5 Pro" Model
     try:
-        model = genai.GenerativeModel('gemini-2.5-flash')
+        model = genai.GenerativeModel('models/gemini-2.5-pro')
         if img:
-            return model.generate_content([prompt, img]), "Gemini 2.5 Flash"
+            return model.generate_content([prompt, img]), "Gemini 2.5 Pro"
         else:
-            return model.generate_content(prompt), "Gemini 2.5 Flash"
-    except Exception as e:
+            return model.generate_content(prompt), "Gemini 2.5 Pro"
+            
+    except Exception as e1:
+        # TIER 2: Fallback to "2.0 Pro"
         try:
-            fallback = genai.GenerativeModel('gemini-1.5-flash')
+            # print(f"2.5 Pro failed, switching to 2.0 Pro: {e1}") # Uncomment for debugging
+            fallback_1 = genai.GenerativeModel('models/gemini-2.0-pro')
             if img:
-                return fallback.generate_content([prompt, img]), "Gemini 1.5 Flash (Fallback)"
+                return fallback_1.generate_content([prompt, img]), "Gemini 2.0 Pro"
             else:
-                return fallback.generate_content(prompt), "Gemini 1.5 Flash (Fallback)"
-        except:
-            return None, "Error"
+                return fallback_1.generate_content(prompt), "Gemini 2.0 Pro"
+                
+        except Exception as e2:
+            # TIER 3: Final Fallback to "1.5 Flash" (Fast & Stable)
+            try:
+                # print(f"2.0 Pro failed, switching to 1.5 Flash: {e2}")
+                fallback_2 = genai.GenerativeModel('models/gemini-1.5-flash')
+                if img:
+                    return fallback_2.generate_content([prompt, img]), "Gemini 1.5 Flash (Backup)"
+                else:
+                    return fallback_2.generate_content(prompt), "Gemini 1.5 Flash (Backup)"
+            except Exception as e3:
+                return None, f"All Models Busy. Please wait 1 min. ({str(e3)[:50]}...)"
 
 # --- 🖼️ 2. ASSET LOADING ---
 def get_base64_img(file_path):
@@ -269,3 +284,4 @@ st.markdown("""
         </p>
     </div>
 """, unsafe_allow_html=True)
+

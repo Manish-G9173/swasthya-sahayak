@@ -9,7 +9,7 @@ st.set_page_config(page_title="Swasthya Sahayak | AI Triage", layout="wide", pag
 
 # --- 🔑 1. SMART ENGINE CONFIG ---
 # ⚠️ PASTE YOUR NEW API KEY BELOW (Inside the quotes)
-api_key = "AIzaSyCvLMFM1TZ969skH8bXj-b37RKhmfnpXvc"
+api_key = "AIzaSyBlWLsPaujhCv7GwlZF9xXp-f880yfalgg"
 genai.configure(api_key=api_key)
 
 # --- 🧠 INTELLIGENT MODEL SWITCHER (Fixed Names) ---
@@ -269,3 +269,4 @@ st.markdown("""
         </p>
     </div>
 """, unsafe_allow_html=True)
+
